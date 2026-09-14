@@ -46,13 +46,21 @@
   --ink-on-dark-2: #C8BEB0;
   --accent-on-dark: #EBB79A;
 
+  /* the cascade ramp — ordered by cost, see CASCADE_RAMP */
+  --cascade-1: #E5B174;
+  --cascade-2: #D68F52;
+  --cascade-3: #BE6C42;
+  --cascade-4: #A34A32;
+  --cascade-5: #82372D;
+  --cascade-6: #57262F;
+
   /* cost-stack illustration */
-  --stack-markup: #EBCEC7;
-  --stack-markup-edge: #D6A093;
-  --stack-assess: #ECDDBE;
-  --stack-assess-edge: #CFB379;
-  --stack-ic: #E7D3C2;
-  --stack-ic-edge: #D0AB8F;
+  --stack-markup: #DFA98A;
+  --stack-markup-edge: #C07E5C;
+  --stack-assess: #EBC79B;
+  --stack-assess-edge: #D0A163;
+  --stack-ic: #F5E2C6;
+  --stack-ic-edge: #DFBE8A;
 
   /* geometry + type */
   --radius-sm: 12px;
@@ -69,11 +77,11 @@
   --accent-glow-0: rgba(194,96,58,0);
 
   /* one per finding category — see FINDING_COLORS */
-  --finding-downgrade: #C2603A;
-  --finding-markup: #B23127;
-  --finding-padding: #9A5B12;
-  --finding-junk-fee: #C99A2E;
-  --finding-routing: #7A4DA8;
+  --finding-downgrade: #82372D;
+  --finding-markup: #57262F;
+  --finding-padding: #D68F52;
+  --finding-junk-fee: #E5B174;
+  --finding-routing: #A34A32;
 
   /* liquid-glass materials, spring motion, layered depth */
   --blur: saturate(180%) blur(20px);
@@ -119,9 +127,24 @@ transition:transform .3s var(--spring)}
 filter:drop-shadow(0 2px 3px rgba(61,43,31,.24))}
 .logo:hover .logomark{transform:translateY(-1px) scale(1.06)}
 .navlinks{margin-left:auto;display:flex;gap:22px;align-items:center}
-.navlinks a:not(.btn){color:var(--muted);font-size:14.5px;font-weight:600;
-transition:color .2s ease}
+.navlinks a:not(.btn){position:relative;color:var(--muted);font-size:14.5px;
+font-weight:600;transition:color .2s ease}
 .navlinks a:not(.btn):hover{color:var(--ink)}
+/* The current item. The nav has always set class="on" here and nothing ever
+   styled it, so "where am I" was announced to screen readers and invisible to
+   everyone else. Now the scroll-spy drives it as you move down the page. */
+.navlinks a:not(.btn).on{color:var(--ink)}
+.navlinks a:not(.btn).on::after{content:"";position:absolute;left:0;right:0;
+bottom:-7px;height:2px;border-radius:2px;background:var(--accent)}
+/* "Sign out" changes state, so it is a POST — a <button> standing among the
+   anchors. It has to read as one of them, and its wrapping <form> must not
+   introduce a box of its own inside the flex row. Mirrors cascade.css's
+   .navlink-btn, because this nav and the app's are one header on two sheets. */
+.navlinks form{display:inline;margin:0}
+.navlink-btn{appearance:none;background:none;border:0;padding:0;cursor:pointer;
+font-family:inherit;font-size:14.5px;font-weight:600;color:var(--muted);
+transition:color .2s ease}
+.navlink-btn:hover{color:var(--ink)}
 .btn{display:inline-block;border-radius:12px;padding:12px 22px;font-weight:650;
 font-size:15px;cursor:pointer;border:1px solid transparent;
 transition:transform .22s var(--spring),box-shadow .28s var(--spring),
@@ -209,20 +232,22 @@ border-radius:var(--radius);box-shadow:var(--specular),var(--shadow);padding:24p
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
 /* fee stack */
 .stack{display:flex;flex-direction:column;gap:10px;max-width:460px}
+/* No :hover lift on .bar, .stage, .mcard or .trust .t. Every one of them is a
+   plain <div> with nothing to click — the lift read as an affordance, people
+   clicked, and nothing happened. Hover states are reserved for things that
+   respond to a click. */
 .bar{border-radius:14px;padding:15px 18px;color:var(--ink);
 border:1px solid var(--edge,var(--line));
-box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 4px 12px rgba(40,28,15,.06);
-transition:transform .3s var(--spring)}
-.bar:hover{transform:translateX(4px)}
-.bar b{display:block;font-size:16px}.bar span{font-size:12.5px;color:var(--muted)}
+box-shadow:inset 0 1px 0 rgba(255,255,255,.5),0 4px 12px rgba(40,28,15,.06)}
+/* --ink-3, not --muted: the stack fills are tints of the cascade ramp now, and
+   --muted falls to 2.95:1 on the darkest of them. --ink-3 clears AA on all three. */
+.bar b{display:block;font-size:16px}.bar span{font-size:12.5px;color:var(--ink-3)}
 /* pipeline */
 .pipe{display:flex;gap:8px;flex-wrap:wrap}
 .stage{flex:1;min-width:150px;background:var(--glass-strong);
 backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
 border:1px solid var(--glass-border);border-radius:16px;padding:16px 18px;
-box-shadow:var(--specular),var(--shadow);
-transition:transform .35s var(--spring),box-shadow .35s var(--spring)}
-.stage:hover{transform:translateY(-3px);box-shadow:var(--specular),var(--shadow-lg)}
+box-shadow:var(--specular),var(--shadow)}
 .stage .n{width:27px;height:27px;border-radius:9px;
 background:linear-gradient(180deg,var(--white),var(--accent-wash));
 color:var(--accent-ink);display:grid;place-items:center;font-weight:800;
@@ -235,9 +260,7 @@ margin-top:4px}
 .mcard{background:var(--glass-strong);
 backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
 border:1px solid var(--glass-border);
-border-radius:var(--radius);box-shadow:var(--specular),var(--shadow);padding:22px 24px;
-transition:transform .35s var(--spring),box-shadow .35s var(--spring)}
-.mcard:hover{transform:translateY(-3px);box-shadow:var(--specular),var(--shadow-lg)}
+border-radius:var(--radius);box-shadow:var(--specular),var(--shadow);padding:22px 24px}
 .mcard .leak{font-size:12px;font-weight:700;letter-spacing:.5px;
 text-transform:uppercase;color:var(--accent-ink)}
 .mcard .scen{color:var(--muted);font-size:14px;margin:6px 0 14px;
@@ -263,15 +286,27 @@ border-radius:var(--radius);box-shadow:var(--specular),var(--shadow);overflow:hi
 .stmt .sh{padding:12px 18px;border-bottom:1px solid var(--line);
 font-size:12.5px;color:var(--faint);font-weight:700;letter-spacing:.5px;
 text-transform:uppercase}
+/* .line is a <div> when it is inert and a <button> when it is clickable, so
+   the button has to be stripped back to the div's box before either can share
+   this rule. */
 .line{display:flex;justify-content:space-between;gap:12px;padding:11px 18px;
-border-bottom:1px solid var(--line);font-size:14px;cursor:default}
+border-bottom:1px solid var(--line);font-size:14px;cursor:default;
+width:100%;text-align:left;background:none;border-left:none;border-right:none;
+border-top:none;font-family:inherit;color:inherit}
 .line:last-child{border-bottom:none}
 .line .d{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px}
 .line.flag{cursor:pointer}
 .line.flag:hover,.line.active{background:var(--line-2)}
+.line.flag:focus-visible{outline:2px solid var(--accent);outline-offset:-2px}
 .line.flag .d{font-weight:600}
 .dot{display:inline-block;width:8px;height:8px;border-radius:50%;
 margin-right:8px;vertical-align:middle}
+/* key for those dots — the colors encode the finding type, and without this
+   the reader sees five shades of clay and no way to decode them */
+.dotkey{display:flex;flex-wrap:wrap;gap:6px 16px;padding:12px 18px;
+border-bottom:1px solid var(--line);font-size:12.5px;color:var(--muted)}
+.dotkey span.k{display:flex;align-items:center;white-space:nowrap}
+.dotkey .dot.none{background:var(--line);opacity:.7}
 .line .amt{color:var(--muted);white-space:nowrap}
 .detail{background:var(--glass-strong);
 backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
@@ -319,9 +354,7 @@ border-radius:9px;font-weight:700;color:var(--ink)}
 .trust .t{flex:1;min-width:230px;background:var(--glass-strong);
 backdrop-filter:var(--blur);-webkit-backdrop-filter:var(--blur);
 border:1px solid var(--glass-border);border-radius:16px;padding:18px 20px;
-box-shadow:var(--specular),var(--shadow);
-transition:transform .35s var(--spring),box-shadow .35s var(--spring)}
-.trust .t:hover{transform:translateY(-3px);box-shadow:var(--specular),var(--shadow-lg)}
+box-shadow:var(--specular),var(--shadow)}
 .trust .t b{font-size:15px}.trust .t p{font-size:13.5px;color:var(--muted);
 margin-top:4px}
 /* table */
@@ -349,15 +382,55 @@ font-size:13px}
 @media(max-width:720px){.navlinks{gap:12px}.navlinks a:not(.btn){display:none}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{
 animation-duration:.001ms !important;transition-duration:.001ms !important}
-.btn:hover,.mcard:hover,.stage:hover,.trust .t:hover,.bar:hover,
-.logo:hover .logomark{transform:none !important}}
+.btn:hover,.logo:hover .logomark{transform:none !important}}
 </style><nav class="top"><div class="wrap">
-<a class="logo" href="#top"><span class="logomark"><svg viewBox='139 168 182 241' xmlns='http://www.w3.org/2000/svg' aria-hidden='true' focusable='false'><circle cx='230' cy='259' r='88' fill='#C2603A' stroke='#9E4A28' stroke-width='3'/><circle cx='230' cy='304' r='78' fill='#D98A4E' stroke='#B56A34' stroke-width='3'/><circle cx='230' cy='344' r='62' fill='#EBB77E' stroke='#CE9250' stroke-width='3'/></svg></span> Cascade</a>
+<a class="logo" href="index.html"><span class="logomark"><svg viewBox='139 168 182 241' xmlns='http://www.w3.org/2000/svg' aria-hidden='true' focusable='false'><circle cx='230' cy='259' r='88' fill='#C2603A' stroke='#9E4A28' stroke-width='3'/><circle cx='230' cy='304' r='78' fill='#D98A4E' stroke='#B56A34' stroke-width='3'/><circle cx='230' cy='344' r='62' fill='#EBB77E' stroke='#CE9250' stroke-width='3'/></svg></span> Cascade</a>
 <div class="navlinks">
-<a href="#how">How it works</a><a href="#leaks">The leaks</a>
-<a href="#demo">Live demo</a><a href="#contact">Contact</a>
-<a class="btn btn-primary" href="#demo" style="padding:9px 16px">See a live audit</a>
-</div></div></nav><section class="hero" id="top"><div class="wrap">
+<a href="index.html#how" data-spy="how">How it works</a>
+<a href="index.html#leaks" data-spy="leaks">The leaks</a>
+<a href="demo.html">Live demo</a>
+<a href="index.html#contact" data-spy="contact">Pricing</a>
+<a class="btn btn-primary" href="demo.html" style="padding:9px 16px">See a live audit</a>
+</div></div></nav><script>
+/* Scroll-spy: most nav items are sections of home, so "where am I" has to be
+   answered as the reader scrolls rather than by which document is loaded. Marks
+   aria-current="true" (not "page" — it is the same page) so the state is
+   announced and not merely painted. Inline, like everything else here: the site
+   makes zero external requests. */
+(function () {
+  /* Deferred: this script sits directly under the nav, and the sections it
+     observes are further down the document — running it inline would look up
+     every id before the parser had reached them and silently find nothing. */
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", start);
+  } else {
+    start();
+  }
+  function start() {
+  var links = [].slice.call(document.querySelectorAll(".top .navlinks a[data-spy]"));
+  var seen = [];
+  links.forEach(function (a) {
+    var el = document.getElementById(a.dataset.spy);
+    if (el) seen.push(el);
+  });
+  if (!seen.length || !window.IntersectionObserver) return;
+  function mark(id) {
+    links.forEach(function (a) {
+      var on = a.dataset.spy === id;
+      a.classList.toggle("on", on);
+      if (on) a.setAttribute("aria-current", "true");
+      else a.removeAttribute("aria-current");
+    });
+  }
+  /* A band across the middle of the viewport, so the current section is the one
+     the reader is actually looking at rather than whichever edge crossed last. */
+  var obs = new IntersectionObserver(function (entries) {
+    entries.forEach(function (en) { if (en.isIntersecting) mark(en.target.id); });
+  }, { rootMargin: "-45% 0px -50% 0px" });
+  seen.forEach(function (s) { obs.observe(s); });
+  }
+})();
+</script><section class="hero" id="top"><div class="wrap">
 <div class="herogrid">
 <div class="herolead">
 <div class="eyebrow">Interchange audit engine</div>
@@ -367,8 +440,8 @@ true cost from the published Visa &amp; Mastercard tables and Regulation II.
 Every dollar above the schedule is documented — with the math and the citation
 behind each finding.</p>
 <div class="cta">
-<a class="btn btn-primary" href="#demo">See a live audit</a>
-<a class="btn btn-ghost" href="#how">How it works</a>
+<a class="btn btn-primary" href="demo.html">See a live audit</a>
+<a class="btn btn-ghost" href="index.html#how">How it works</a>
 </div>
 <div class="hstrip">
 <div><div class="v num">6</div><div class="k">checks on every statement</div></div>
@@ -413,93 +486,7 @@ cited tables.</p></div>
 every statement for each one — and when it finds a leak, it shows the exact math
 and the published rate it's cited to. You can see that on a real statement just
 below.</p></div>
-<div class="mgrid"><div class="mcard"><div class="leak">Interchange downgrade</div><p class="leakp">A sale that qualified for a cheaper interchange category gets billed at a more expensive one instead — same card, higher rate. It&#x27;s the largest and most common leak we find.</p></div><div class="mcard"><div class="leak">Pass-through padding</div><p class="leakp">Network fees are meant to pass straight through at cost. A fraction of a cent quietly added to each one is invisible on any single swipe — and real money across tens of thousands of them.</p></div><div class="mcard"><div class="leak">Opaque processor markup</div><p class="leakp">Interchange and network fees are fixed pass-throughs; the processor&#x27;s own margin is the only layer you can negotiate. The statement blends it into one rate, so we separate it back out and show it plainly.</p></div><div class="mcard"><div class="leak">Debit routing (Reg II)</div><p class="leakp">Regulated debit cards carry a legal price cap under the Durbin Amendment (Reg II). Billed as if they were exempt, they quietly cost more than the law allows.</p></div></div></div></section><section id="demo"><div class="wrap">
-<div class="sectionhead"><div class="eyebrow">Live demo</div>
-<h2>See it on a real statement</h2>
-<p>Below is a parsed sample statement. Click any <b>flagged</b> line to see the
-finding Cascade produced — the overcharge, the worked math, and the published
-rate it's cited to. Nothing is estimated; unverifiable lines are flagged for a
-human, never guessed.</p></div>
-<div class="demo">
-<div class="stmt"><div class="sh">Parsed statement · click a flagged line</div>
-<div class="line flag" data-f="0"><span class="d"><span class="dot" style="background:#B23127"></span>DISCOUNT RATE</span><span class="amt num">$529</span></div><div class="line flag" data-f="1"><span class="d"><span class="dot" style="background:#7A4DA8"></span>VI CPS RETAIL DEBIT</span><span class="amt num">$391</span></div><div class="line flag" data-f="2"><span class="d"><span class="dot" style="background:#C2603A"></span>VI COMMERCIAL CNP</span><span class="amt num">$319</span></div><div class="line flag" data-f="3"><span class="d"><span class="dot" style="background:#C2603A"></span>VI EIRF DEBIT</span><span class="amt num">$166</span></div><div class="line flag" data-f="4"><span class="d"><span class="dot" style="background:#C2603A"></span>VI STANDARD DEBIT</span><span class="amt num">$110</span></div><div class="line"><span class="d" style="opacity:.7">VI CPS RETAIL DEBIT</span><span class="amt num">$1,284</span></div><div class="line"><span class="d" style="opacity:.7">MERCHANT SERVICE FEE</span><span class="amt num">$9.95</span></div></div>
-<div class="detail" id="dwrap"><div class="ph" id="dph">Click a flagged line
-to see its cited finding →</div></div>
-</div>
-<p class="synth">Synthetic sample statement with planted findings —
-Figures from Cascade&#x27;s synthetic validation corpus.</p></div>
-<script type="application/json" id="demo-findings">[{"type": "markup", "title": "Processor markup above competitive benchmark", "monthly": 975.32, "annual": 11703.84, "conf": "medium", "math": "effective rate on $211,490.10 V/MC volume: 2.58%\n  interchange        $  3,509.26  (1.66%)\n  assessments        $    281.51  (0.13%)\n  network pass-thru  $     89.54  (0.04%)\n  processor markup   $  1,586.08  (0.75%)\nbenchmark markup (0.15% + $0.08/item on 3669 items) = $610.76\nmonthly excess = 1,586.08 - 610.76 = $975.32; annualized x12 = $11,703.84.", "cite": "ADVISORY market benchmark \u2014 competitive interchange-plus pricing for this annual volume tier; not a published network rate.", "root": "Bundled/tiered pricing: the processor's margin (discount rate + per-item and fixed fees) exceeds competitive interchange-plus pricing for this volume.", "remedy": "Renegotiate to interchange-plus at or below 0.15% + $0.08/item, or competitively bid the processing relationship."}, {"type": "routing", "title": "Exempt debit routed on signature rails \u2014 least-cost routing opportunity", "monthly": 244.18, "annual": 2930.16, "conf": "medium", "math": "debit mix on $103,263.21 debit volume: regulated $35,542.47 (capped \u2014 routing cannot change it), exempt downgraded $12,331.32 (claimed by the downgrade check), exempt qualified routable $48,899.25\ncurrent interchange on routable volume = $645.58\nadvisory alt-network range: 0.3% + $0.05/item = $200.70  to  0.6% + $0.10/item = $401.40\nmonthly savings vs the EXPENSIVE end = 645.58 - 401.40 = $244.18 (range up to $444.88); annualized x12 = $2,930.16.\nalready at/below alt-network pricing (excluded): VI CPS SUPERMARKET DEBIT", "cite": "12 CFR 235.7 (Regulation II) \u2014 issuers must enable at least two unaffiliated payment card networks on every debit card (extended to card-not-present by the Board's 2022 clarification, 87 FR 61217); merchants hold the routing choice. \u00b7 ADVISORY market benchmark \u2014 typical exempt-debit pricing on unaffiliated single-message/PINless networks (surveyed range 0.30%\u20130.60% + $0.05\u2013$0.10/item); not a published network rate. Actual pricing depends on network agreements, MCC, and BIN enablement.", "root": "All exempt debit settles on the Visa/Mastercard signature rails at the brands' exempt interchange tables; the processor is not exercising the least-cost routing choice Reg II guarantees.", "remedy": "Enable least-cost debit routing with the processor/gateway so eligible exempt debit routes to lower-cost unaffiliated networks; confirm PINless eligibility for card-not-present volume. Regulated volume is unaffected (capped on every network)."}, {"type": "downgrade", "title": "VI COMMERCIAL CNP \u2014 no Level 2/3 data", "monthly": 110.98, "annual": 1331.76, "conf": "medium", "math": "charged: $319.22 on $11,682.30 / 38 items (2.7% + $0.10).\nbenchmark (Commercial Product 3 [purchasing_corporate], conservative tier): 1.75% + $0.10 -> $208.24.\nmonthly savings = 319.22 - 208.24 = $110.98; annualized x12 = $1,331.76.", "cite": "Visa USA Interchange Reimbursement Fees, Visa Supplemental Requirements, 18 April 2026, p.16 [schedule visa-us-2026-04-18, sha256 2c34e719746a\u2026]", "root": "Commercial/purchasing card volume settling without Level 3 line-item data \u2014 priced at the Level 1 card-not-present rate.", "remedy": "Enable Level 2/3 data in the gateway (invoice #, tax amount, line items). Most B2B gateways can populate this automatically."}, {"type": "downgrade", "title": "VI EIRF DEBIT -> CPS/Retail, Debit", "monthly": 81.48, "annual": 977.76, "conf": "high", "math": "charged: $166.29 on $7,788.20 / 150 items (1.75% + $0.20).\nbenchmark (CPS/Retail, Debit, conservative tier): 0.8% + $0.15 -> $84.81.\nmonthly savings = 166.29 - 84.81 = $81.48; annualized x12 = $977.76.", "cite": "Visa USA Interchange Reimbursement Fees, Visa Supplemental Requirements, 18 April 2026, p.5 [schedule visa-us-2026-04-18, sha256 2c34e719746a\u2026]", "root": "Exempt debit failed CPS qualification \u2014 most commonly settlement later than 2 days after authorization, missing authorization data, or an auth/settlement amount mismatch.", "remedy": "Close batches daily and confirm the terminal/gateway passes full CPS data fields; ask the processor for a downgrade reason report."}, {"type": "downgrade", "title": "VI STANDARD DEBIT -> CPS/Retail, Debit", "monthly": 59.28, "annual": 711.36, "conf": "high", "math": "charged: $109.57 on $4,543.12 / 93 items (1.9% + $0.25).\nbenchmark (CPS/Retail, Debit, conservative tier): 0.8% + $0.15 -> $50.29.\nmonthly savings = 109.57 - 50.29 = $59.28; annualized x12 = $711.36.", "cite": "Visa USA Interchange Reimbursement Fees, Visa Supplemental Requirements, 18 April 2026, p.5 [schedule visa-us-2026-04-18, sha256 2c34e719746a\u2026]", "root": "Terminal downgrade on exempt debit \u2014 settled more than 2 days after authorization or missing required electronic authorization data entirely.", "remedy": "Fix batch timing first (daily settlement); then verify auth data fields with the processor."}]</script>
-<script>
-(function(){
- var F=JSON.parse(document.getElementById('demo-findings').textContent);
- function money(x){return x==null?'—':'$'+Number(x).toLocaleString(undefined,
-   {minimumFractionDigits:2,maximumFractionDigits:2});}
- function esch(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;')
-   .replace(/>/g,'&gt;');}
- // separate a rate "N% + $M(/item)" into a clay % chip + a per-item chip.
- function chips(h){return h.replace(
-   /(\d+(?:\.\d+)?%)\s*\+\s*(\$\d+(?:\.\d+)?)(\/item)?/g,
-   function(m,pct,cents,per){return '<span class="rate">'+pct+'</span>'+
-     '<span class="plus">+</span><span class="per">'+cents+(per||'/item')+
-     '</span>';});}
- function fmtMath(s){
-   // pass 1: build typed items, expanding "intro: a, b, c" lists into rows.
-   var items=[];
-   s.split('\n').forEach(function(ln,i){
-     var res=/(annualized x12|monthly savings|monthly excess)/.test(ln);
-     if(!res){
-       var ci=ln.indexOf(': ');
-       if(ci>-1){
-         var rest=ln.slice(ci+2);
-         var parts=rest.split(/,\s+(?=[a-z$])/);   // keep $-amount commas intact
-         if(parts.length>=2){
-           items.push({t:'sub',x:esch(ln.slice(0,ci+1))});
-           parts.forEach(function(p){items.push({t:'item',x:chips(esch(p))});});
-           return;
-         }
-       }
-     }
-     var row=/^\s\s/.test(ln);
-     if(res){
-       items.push({t:'res',x:esch(ln).replace(
-         /(\$[0-9][0-9,]*\.[0-9]{2})/g,'<b>$1</b>')});
-     }else if(i===0){items.push({t:'head',x:chips(esch(ln))});
-     }else if(row){items.push({t:'row',x:esch(ln)});
-     }else{items.push({t:'prose',x:chips(esch(ln))});}
-   });
-   // pass 2: render, with gaps between groups but tight within row/item runs.
-   return items.map(function(it,idx){
-     var p=idx>0?items[idx-1]:null;
-     var cls='ml'+(it.t==='res'?' res':it.t==='head'?' head':
-       it.t==='sub'?' sub':it.t==='item'?' item':it.t==='row'?' row':'');
-     var tight=(it.t==='item'&&p&&(p.t==='item'||p.t==='sub'))||
-               (it.t==='row'&&p&&p.t==='row');
-     if(idx>0&&it.t!=='res'&&it.t!=='head'&&!tight){cls+=' gap';}
-     return '<div class="'+cls+'">'+it.x+'</div>';
-   }).join('');
- }
- function show(f){
-  var c=f.conf==='high'?'high':'medium';
-  document.getElementById('dwrap').innerHTML=
-   '<span class="chip brand">'+f.type.replace('_',' ')+'</span> '+
-   '<span class="chip '+c+'">'+f.conf+' confidence</span>'+
-   '<h3 style="margin:12px 0 0">'+f.title+'</h3>'+
-   '<div class="dsave">'+money(f.monthly)+'<small>/mo · '+money(f.annual)+
-   '/yr</small></div>'+
-   '<div class="mlabel">The math</div><div class="mathbox">'+
-   fmtMath(f.math)+'</div>'+
-   '<div class="mlabel">Rate citation</div><div class="cite">'+f.cite+'</div>'+
-   (f.remedy?'<div class="mlabel">Fix</div><div class="cite">'+f.remedy+
-    '</div>':'');
- }
- var ls=document.querySelectorAll('.line.flag');
- ls.forEach(function(el){el.addEventListener('click',function(){
-   ls.forEach(function(x){x.classList.remove('active');});
-   el.classList.add('active');
-   show(F[+el.getAttribute('data-f')]);
- });});
-})();
-</script></section><section id="trust"><div class="wrap">
+<div class="mgrid"><div class="mcard"><div class="leak">Interchange downgrade</div><p class="leakp">A sale that qualified for a cheaper interchange category gets billed at a more expensive one instead — same card, higher rate. It&#x27;s the largest and most common leak we find.</p></div><div class="mcard"><div class="leak">Pass-through padding</div><p class="leakp">Network fees are meant to pass straight through at cost. A fraction of a cent quietly added to each one is invisible on any single swipe — and real money across tens of thousands of them.</p></div><div class="mcard"><div class="leak">Opaque processor markup</div><p class="leakp">Interchange and network fees are fixed pass-throughs; the processor&#x27;s own margin is the only layer you can negotiate. The statement blends it into one rate, so we separate it back out and show it plainly.</p></div><div class="mcard"><div class="leak">Debit routing (Reg II)</div><p class="leakp">Regulated debit cards carry a legal price cap under the Durbin Amendment (Reg II). Billed as if they were exempt, they quietly cost more than the law allows.</p></div></div></div></section><section id="trust"><div class="wrap">
 <div class="sectionhead"><div class="eyebrow">Why you can trust it</div>
 <h2>Defensible by design</h2>
 <p>A finding only helps if it survives the processor pushing back — so
